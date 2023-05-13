@@ -1,1 +1,44 @@
 @import url("https://fonts.googleapis.com/css2?family=Kanit:wght@200;300&display=swap");
+.chatbot-header h3 {
+  font-size: 24px;
+  margin: 0;
+  font-family: "Kanit", sans-serif;
+  font-weight: 300;
+  animation: glitch 3s infinite;
+}
+.animation-load {
+  width: 8.6%;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  display: inline-block;
+  padding: 0px 17px;
+  max-width: 80%;
+  background-color: #dcf8c6;
+}
+
+@keyframes glitch {
+  0% {
+    opacity: 1;
+    transform: none;
+  }
+  10% {
+    opacity: 0;
+    transform: skew(-10deg);
+  }
+  20% {
+    opacity: 1;
+    transform: none;
+  }
+  30% {
+    opacity: 0;
+    transform: skew(10deg);
+  }
+  40% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
