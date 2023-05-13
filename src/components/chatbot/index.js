@@ -50,6 +50,20 @@ const Chatbot = () => {
       Notify("Ocurrió un error grabando, intenta escribiendo", "error");
     }
   };
+
+  const handleBotMessage = (response) => {
+    const newMessage = {
+      text: response.message,
+      sender: "bot",
+    };
+    setTimeout(() => {
+      setMessages((prevMessages) => [...prevMessages, newMessage]);
+      setLoadMessageBot(false);
+      setTimeout(() => {
+        inputMessage.current && inputMessage.current.focus();
+      }, 10);
+    }, 500);
+  };
       }
     }
   };
