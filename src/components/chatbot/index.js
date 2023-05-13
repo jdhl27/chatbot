@@ -38,6 +38,7 @@ const Chatbot = () => {
 
       if (valueRecording?.includes("enviar")) {
         valueRecording = valueRecording?.replace("enviar", "");
+        handleMessageSubmit(valueInput + " " + valueRecording);
       }
     }
   };
@@ -151,6 +152,11 @@ const Chatbot = () => {
             value={valueInput}
             onChange={(text) => setValueInput(text.currentTarget.value)}
             autoComplete="off"
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleMessageSubmit();
+              }
+            }}
           />
 
           <FaMicrophone
@@ -166,6 +172,7 @@ const Chatbot = () => {
         </div>
         <button
           disabled={loadMessageBot}
+          onClick={() => handleMessageSubmit()}
           style={{ cursor: "pointer" }}
         >
           <MdSend />
