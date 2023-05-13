@@ -1,4 +1,14 @@
 import React, { useState, useRef, useEffect } from "react";
+import Lottie from "lottie-react";
+import { FaMicrophone } from "react-icons/fa";
+import { MdSend } from "react-icons/md";
+
+import waitAnimation from "../../animations/wait.json";
+import robotAnimation from "../../animations/robot.json";
+import loadAnimation from "../../animations/loading.json";
+import "./styles.css";
+import { Notify } from "../notify";
+
 const Chatbot = () => {
   const [messages, setMessages] = useState([]);
   const [recording, setRecording] = useState(false);
