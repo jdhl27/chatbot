@@ -17,6 +17,11 @@ const Chatbot = () => {
 
   const messagesEndRef = useRef(null);
   const inputMessage = useRef(null);
+
+  useEffect(() => {
+    messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
   // eslint-disable-next-line no-undef
   let recognition = new webkitSpeechRecognition();
   recognition.lang = "es-ES";
