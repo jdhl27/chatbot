@@ -64,7 +64,41 @@ const Chatbot = () => {
       }, 10);
     }, 500);
   };
+
+  const handleMessageSubmit = (value) => {
+    let valueSend = value || valueInput;
+    if (valueSend) {
+      valueSend = valueSend?.trim();
+      if (!valueSend || valueSend === "") {
+        return;
       }
+      const newMessage = {
+        text: valueSend,
+        sender: "user",
+      };
+      setMessages((prevMessages) => [...prevMessages, newMessage]);
+      setValueInput("");
+      setLoadMessageBot(true);
+
+      fetch("http://127.0.0.1:5000/message", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ message: valueSend }),
+      })
+        .then((response) => response.json())
+        .then((data) => handleBotMessage(data))
+        .catch(() => {
+          Notify(
+            "En este momento presentamos fallas en el servicio, discúlpanos",
+            "error"
+          );
+          // setLoadMessageBot(false);
+          setTimeout(() => {
+            inputMessage.current && inputMessage.current.focus();
+          }, 10);
+        });
     }
   };
 
