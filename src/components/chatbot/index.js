@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import Lottie from "lottie-react";
 import { FaMicrophone } from "react-icons/fa";
 import { MdSend } from "react-icons/md";
+// import { FiArrowDown } from "react-icons/fi";
 
 import waitAnimation from "../../animations/wait.json";
 import robotAnimation from "../../animations/robot.json";
@@ -16,10 +17,13 @@ const Chatbot = () => {
   const [loadMessageBot, setLoadMessageBot] = useState(false);
 
   const messagesEndRef = useRef(null);
+  // const divRef = useRef(null);
   const inputMessage = useRef(null);
 
   useEffect(() => {
-    messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    setTimeout(() => {
+      handleDown();
+    }, 10);
   }, [messages]);
 
   // eslint-disable-next-line no-undef
@@ -52,18 +56,20 @@ const Chatbot = () => {
     }
   };
 
-  const handleBotMessage = (response) => {
-    const newMessage = {
-      text: response.message,
-      sender: "bot",
-    };
-    setTimeout(() => {
-      setMessages((prevMessages) => [...prevMessages, newMessage]);
-      setLoadMessageBot(false);
+  const handleBotMessage = (response = {}) => {
+    if (Object.entries(response).length > 0) {
+      const newMessage = {
+        text: response.message,
+        sender: "bot",
+      };
       setTimeout(() => {
-        inputMessage.current && inputMessage.current.focus();
-      }, 10);
-    }, 500);
+        setMessages((prevMessages) => [...prevMessages, newMessage]);
+        setLoadMessageBot(false);
+        setTimeout(() => {
+          inputMessage.current && inputMessage.current.focus();
+        }, 10);
+      }, 500);
+    }
   };
 
   const handleMessageSubmit = (value) => {
@@ -88,7 +94,17 @@ const Chatbot = () => {
         },
         body: JSON.stringify({ message: valueSend }),
       })
-        .then((response) => response.json())
+        .then((response) => {
+          if (response.status === 200) {
+            return response.json();
+          }
+          Notify("Algo pasó, envia el mensaje de nuevo por favor", "error");
+          setLoadMessageBot(false);
+          setTimeout(() => {
+            inputMessage.current && inputMessage.current.focus();
+          }, 10);
+          return {};
+        })
         .then((data) => handleBotMessage(data))
         .catch(() => {
           Notify(
@@ -101,6 +117,14 @@ const Chatbot = () => {
           }, 10);
         });
     }
+  };
+
+  const handleDown = () => {
+    messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const capitalize = (str) => {
+    return str.charAt(0).toUpperCase() + str.slice(1);
   };
 
   return (
@@ -119,25 +143,53 @@ const Chatbot = () => {
         {messages.length === 0 ? (
           <Lottie
             animationData={waitAnimation}
-            style={{ width: "60%", margin: "0 auto" }}
+            style={{ width: "74%", margin: "97px auto" }}
           />
         ) : (
-          messages.map((message, index) => (
-            <div
-              key={index}
-              className={`message ${
-                message.sender === "user" ? "user" : "bot"
-              }`}
-            >
-              <p>{message.text}</p>
-            </div>
-          ))
+          messages.map((message, index) => {
+            const textParts = message.text.split(":");
+            const introduction = textParts[0].trim();
+            const items =
+              textParts.length > 1
+                ? textParts[1].split(";").map((item) => item.trim())
+                : [];
+
+            return (
+              <div
+                key={index}
+                className={`message ${
+                  message.sender === "user" ? "user" : "bot"
+                }`}
+              >
+                {introduction && !items.length && (
+                  <p>{capitalize(message.text)}</p>
+                )}
+                {introduction && items.length > 0 && (
+                  <p>
+                    {capitalize(introduction)}:
+                    <ul>
+                      {items.map((item, itemIndex) => (
+                        <li style={{ listStyleType: "circle" }} key={itemIndex}>
+                          {capitalize(item)}
+                        </li>
+                      ))}
+                    </ul>
+                  </p>
+                )}
+              </div>
+            );
+          })
         )}
         {loadMessageBot && (
           <div className="message bot">
             <Lottie animationData={loadAnimation} className="animation-load" />
           </div>
         )}
+        {/* {messages.length > 5 && divRef.current.scrollTop < 10 ? (
+          <div onClick={handleDown} className="container-button-down">
+            <FiArrowDown />
+          </div>
+        ) : null} */}
         <div ref={messagesEndRef} />
       </div>
       <div className="form">
